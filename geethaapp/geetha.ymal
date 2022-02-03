@@ -1,1 +1,42 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "geethaapp"
+  namespace: "default"
+  labels:
+    app: "geethaapp"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "geethaapp"
+  template:
+    metadata:
+      labels:
+        app: "geethaapp"
+    spec:
+      containers:
+      - name: "bookmydr-frontend-sha256-1"
+        image: "gcr.io/gcpdemo-334906/github.com/geethakadiyala/bookmydr-frontend@sha256:55e6570b5bf2069821f5c871237110af11e0b14a9ab494b17f81cf6f628a8feb"
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "geethaapp-hpa-ckoc"
+  namespace: "default"
+  labels:
+    app: "geethaapp"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "geethaapp"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80
 
